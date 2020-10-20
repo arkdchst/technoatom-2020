@@ -18,11 +18,11 @@ class Client:
 	def __init__(self):
 		self.session = requests.Session()
 
-	def _request(self, method, url, accept_codes=None, data=None, headers=None, params=None):
+	def _request(self, method, url, accept_codes=None, data=None, json=None, headers=None, params=None):
 		if accept_codes == None:
 			accept_codes = range(200, 300)
 
-		res = self.session.request(method, url, data=data, headers=headers, params=params)
+		res = self.session.request(method, url, data=data, json=json, headers=headers, params=params)
 
 		if not res.status_code in accept_codes:
 			raise ResponseStatusCodeError(f'Response status code {res.status_code} not in {accept_codes}')
@@ -57,11 +57,20 @@ class Client:
 	def add_segment(self):
 		name = random_name()
 		res = self._request('POST', 'https://target.my.com/api/v2/remarketing/segments.json',
-			data = '{"name":"'+ name +'","pass_condition":1,"relations":[{"object_type":"remarketing_player","params":{"type":"positive","left":365,"right":0}}],"logicType":"or"}',
+			json={
+				"name" : name,
+				"pass_condition" : 1,
+				"relations" : [{
+					"object_type" : "remarketing_player",
+					"params" : {"type" : "positive", "left" : 365, "right" : 0}
+				}],
+				"logicType" : "or"
+			},
+
 			headers={'X-CSRFToken': self.csrf})
 
 		return res.json()['id']
 
 	def delete_segment(self, id_):
-		self._request('DELETE', 'https://target.my.com/api/v2/remarketing/segments/'+ str(id_) +'.json',
+		self._request('DELETE', f'https://target.my.com/api/v2/remarketing/segments/{id_}.json',
 			headers={'X-CSRFToken': self.csrf})
