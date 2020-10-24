@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+outfile=analyzed
 
 print_usage(){
 	cat <<EOF
@@ -11,22 +12,24 @@ FILE
 	входной файл
 DIR
 	использовать рекурсивно файлы из DIR
-EOF
 
+Имя выходного файла - $outfile.
+EOF
 }
 
 
 error(){
-	print_usage
 	if [ $# -ne 0 ]; then exit $1; fi
 	exit 1
 }
 
 
-
 methods='^(OPTIONS|GET|HEAD|POST|PUT|DELETE|TRACE|CONNECT)$'
 
-if [ ! $# -eq 2 ]; then error; fi
+if [ ! $# -eq 2 ]; then
+	print_usage
+	error
+fi
 
 for last_arg in $@; do :; done
 if [ -f $last_arg ]; then
@@ -39,6 +42,15 @@ else
 	error 2
 fi
 
+if [ -f analyzed ]; then
+	echo -n "File '$outfile' exists, overwrite? (yes/NO): " >&2
+	read answer
+	if [ ! \( "$answer" = "y" -o "$answer" = "yes" \) ]; then	
+		error 17
+	fi
+fi
+
+exec 1>$outfile
 
 case "$1" in
 	--help)
@@ -58,5 +70,9 @@ case "$1" in
 	task_e)
 		cat $file | awk -F '[ "]' '$11>=500 && $11<600 {print $12,$8,$11,$1}' | sort -rnk 1,1 | head -10 | cut -d ' ' -f 2-
 		;;
-	*) error;;
+	*)
+		rm $outfile
+		print_usage >&2
+		error
+		;;
 esac

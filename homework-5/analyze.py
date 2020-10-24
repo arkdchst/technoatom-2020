@@ -3,6 +3,7 @@ import argparse
 import re
 from itertools import groupby
 import json
+from os.path import isfile
 
 def task_a(lines):
 	return len(lines)
@@ -106,19 +107,26 @@ def to_requests(lines):
 	return requests
 
 def main():
-	parser = argparse.ArgumentParser(usage='analyze.py  [--json JSON]  task_a | task_b | task_c | task_d | task_e  <FILE>')
+	outfile = 'analyzed'
+
+	parser = argparse.ArgumentParser(usage='analyze.py  [--json]  task_a | task_b | task_c | task_d | task_e  <FILE>', epilog=f'Имя выходного файла - {outfile}.')
 	parser.add_argument('task', action='store', help='см. в README.md', choices=['task_a', 'task_b', 'task_c', 'task_d', 'task_e'])
-	parser.add_argument('file', metavar='FILE', help='входной файл', action='store')
-	parser.add_argument('--json', metavar='JSON', help='записать вывод в файл JSON', action='store')
+	parser.add_argument('file', action='store', metavar='FILE', help='входной файл')
+	parser.add_argument('--json', action='store_true', help='записать вывод в формате JSON')
 
 	args = parser.parse_args()
+
+	if isfile(outfile):
+		print(f"File '{outfile}' exists, overwrite? (yes/NO): ", end='')
+		in_ = input()
+		if not (in_ == 'y' or in_ == 'yes'):
+			raise FileExistsError()
 
 	with open(args.file) as f:
 		lines = f.read().split('\n')
 
 	if lines[-1] == '':
 		del lines[-1]
-
 
 	task = args.task
 	if task == 'task_a':
@@ -133,19 +141,19 @@ def main():
 		else:
 			raise Exception()
 
-	if args.json:
-		with open(args.json, 'w') as f:
-			f.write(json.dumps(res))
-	else:
-		if isinstance(res, list):
-			for line in res:
-				for key in line:
-					print(line[key], end=' ')
-				print()
-		elif isinstance(res, int):
-			print(res)
+	with open(outfile, 'w') as f:
+		if args.json:
+				f.write(json.dumps(res))
 		else:
-			raise Exception()
+			if isinstance(res, list):
+				for line in res:
+					for key in line:
+						f.write(str(line[key]) + ' ')
+					f.write('\n')
+			elif isinstance(res, int):
+				f.write(str(res))
+			else:
+				raise Exception()
 
 if __name__ == '__main__':
 	main()

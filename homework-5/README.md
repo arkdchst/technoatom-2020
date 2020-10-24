@@ -1,5 +1,7 @@
 ### Описание выполненных заданий:
 
+Скрипты пишут в файл `analyzed`.
+
 Оба скрипта принимают один из следующих задач-параметров:
 
 * task_a - общее кол-во запросов
@@ -34,18 +36,22 @@ FILE
 	входной файл
 DIR
 	использовать рекурсивно файлы из DIR
+
+Имя выходного файла - analyzed.
 ```
 
 #### python-скрипт
 
 Использование:
 ```
-analyze.py  [--json JSON]  task_a | task_b | task_c | task_d | task_e  <FILE>
+analyze.py  [--json]  task_a | task_b | task_c | task_d | task_e  <FILE>
 
 task_a, task_b, task_c, task_d, task_e
 	см. в README.md
 FILE
 	входной файл
---json JSON
-	записать вывод в файл JSON
+--json
+	записать вывод в формате JSON
+
+Имя выходного файла - analyzed.
 ```
