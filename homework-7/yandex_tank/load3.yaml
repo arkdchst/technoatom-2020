@@ -1,0 +1,17 @@
+overload:
+  enabled: true
+  token_file: /var/loadtest/token.txt
+  package: yandextank.plugins.DataUploader
+  job_name: technoatom-test_3
+phantom:
+  address: localhost:8090
+  ammofile: /var/loadtest/ammo.txt
+  load_profile:
+    load_type: rps
+    schedule: step(1,10,2,10s)
+console:
+  enabled: true
+telegraf:
+  enabled: true
+  package: yandextank.plugins.Telegraf
+  config: /var/loadtest/monitoring.xml

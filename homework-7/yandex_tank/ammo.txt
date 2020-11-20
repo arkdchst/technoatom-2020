@@ -1,0 +1,33 @@
+63
+GET /word/get HTTP/1.1
+Host: localhost:8090
+Connection: close
+
+
+166
+POST /number/increase HTTP/1.1
+Host: localhost:8090
+Connection: close
+Content-Length: 15
+Content-Type: application/json
+Authorization: brins_password
+
+{"user":"Brin"}
+166
+POST /number/decrease HTTP/1.1
+Host: localhost:8090
+Connection: close
+Content-Length: 15
+Content-Type: application/json
+Authorization: brins_password
+
+{"user":"Brin"}
+172
+POST /number/set HTTP/1.1
+Host: localhost:8090
+Connection: close
+Content-Length: 26
+Content-Type: application/json
+Authorization: brins_password
+
+{"user":"Brin","number":2}
