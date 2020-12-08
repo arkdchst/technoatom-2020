@@ -1,0 +1,6 @@
+APP_HOST = '0.0.0.0'
+APP_PORT = 8083
+MYSQL_HOST = 'myapp_db'
+MYSQL_PORT = 8081
+MYSQL_DB = myapp_db
+VK_URL = 'vkapi:8082'

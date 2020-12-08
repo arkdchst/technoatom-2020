@@ -1,0 +1,12 @@
+{
+	"chrome": {
+		"default": "87.0",
+		"versions": {
+			"87.0": {
+				"image": "selenoid/chrome:87.0",
+				"port": "4444",
+				"path": "/"
+			}
+		}
+	}
+}

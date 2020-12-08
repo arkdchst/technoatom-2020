@@ -1,0 +1,41 @@
+pipeline{
+	agent any
+
+	stages{
+
+		stage(myapp_system){
+			steps{
+				sh 'docker-compose up -d'
+			}
+		}
+
+		stage(selenoid){
+			steps{
+				dir('./selenoid'){
+					sh './start.sh'
+				}
+			}
+		}
+
+		stage(testing){
+			steps{
+				dir('./test_system'){
+					sh 'docker build . -t test_system'
+					sh './start.sh'
+				}
+			}
+		}
+
+	}
+	
+	post{
+		always{
+			sh 'rm -rf ./allure-results'
+			sh 'cp -r ./test_system/allure_dir ./allure-results'
+			sh 'docker stop selenoid'
+			sh 'docker-compose down'
+			allure reportBuildPolicy: 'ALWAYS', results: [[path: 'myapp/allure-results']]
+		}
+	}
+
+}
